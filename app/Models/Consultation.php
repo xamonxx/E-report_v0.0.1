@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Carbon\Carbon;
@@ -58,13 +60,9 @@ class Consultation extends Model
 
     public static function hasNeedsCategoryPivot(): bool
     {
-        static $hasPivot;
-
-        if ($hasPivot === null) {
-            $hasPivot = Schema::hasTable('consultation_needs_category');
-        }
-
-        return $hasPivot;
+        return Cache::remember('schema:consultation_needs_category_exists', now()->addHour(), function () {
+            return Schema::hasTable('consultation_needs_category');
+        });
     }
 
     public static function productRelations(): array
@@ -393,43 +391,65 @@ class Consultation extends Model
     }
 
     /**
-     * Auto-generate consultation ID in format: AA.YYMM.NNN
+     * Auto-generate consultation ID in format: AA.YYMM.NNNN
      * - AA   = ID Akun (zero-padded 2 digit)
      * - YYMM = Tahun 2 digit + Bulan 2 digit
-     * - NNN  = Nomor urut per akun per bulan (3 digit)
-     * Contoh: 01.2604.001
+     * - NNNN = Nomor urut per akun per bulan (4 digit)
+     * Contoh: 01.2604.0001
      *
-     * Menggunakan DB::transaction + lockForUpdate untuk mencegah
-     * race condition / duplicate ID saat concurrent requests.
+     * Menggunakan sequence row per akun per bulan agar increment
+     * tetap atomik saat banyak request berjalan bersamaan.
      */
     public static function generateConsultationId($accountId = null): string
     {
         return DB::transaction(function () use ($accountId) {
             $now = Carbon::now();
+            $normalizedAccountId = (int) ($accountId ?? 0);
 
             // AA = ID Akun (2 digit, zero-padded)
-            $accountPadded = $accountId ? str_pad($accountId, 2, '0', STR_PAD_LEFT) : '00';
+            $accountPadded = str_pad((string) $normalizedAccountId, 2, '0', STR_PAD_LEFT);
 
             // YYMM = Tahun + Bulan
             $yearMonth = $now->format('ym');
 
-            // Prefix: AA.YYMM
-            $basePrefix = $accountPadded . '.' . $yearMonth;
+            $sequenceQuery = DB::table('consultation_sequences')
+                ->where('account_id', $normalizedAccountId)
+                ->where('year_month', $yearMonth);
 
-            $lastInMonth = static::where('consultation_id', 'like', $basePrefix . '.%')
+            $sequence = $sequenceQuery
                 ->lockForUpdate()
-                ->orderByDesc('consultation_id')
                 ->first();
 
-            if ($lastInMonth) {
-                // Ekstrak 3 digit terakhir (NNN)
-                $lastNum = (int) substr($lastInMonth->consultation_id, -3);
-                $nextNum = $lastNum + 1;
-            } else {
-                $nextNum = 1;
+            if (! $sequence) {
+                try {
+                    DB::table('consultation_sequences')->insert([
+                        'account_id' => $normalizedAccountId,
+                        'year_month' => $yearMonth,
+                        'last_number' => 0,
+                        'created_at' => $now,
+                        'updated_at' => $now,
+                    ]);
+                } catch (QueryException $exception) {
+                    // Another request may have inserted the row first.
+                }
+
+                $sequence = $sequenceQuery
+                    ->lockForUpdate()
+                    ->first();
             }
 
-            return $basePrefix . '.' . str_pad($nextNum, 3, '0', STR_PAD_LEFT);
-        });
+            if (! $sequence) {
+                throw new \RuntimeException('Gagal menyiapkan sequence consultation ID.');
+            }
+
+            $nextNum = ((int) $sequence->last_number) + 1;
+
+            $sequenceQuery->update([
+                'last_number' => $nextNum,
+                'updated_at' => $now,
+            ]);
+
+            return $accountPadded . '.' . $yearMonth . '.' . str_pad((string) $nextNum, 4, '0', STR_PAD_LEFT);
+        }, 5);
     }
 }

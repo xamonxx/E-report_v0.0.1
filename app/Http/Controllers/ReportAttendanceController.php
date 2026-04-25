@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\ReportAttendance;
 use Carbon\Carbon;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 
 class ReportAttendanceController extends Controller
 {
@@ -129,21 +130,18 @@ class ReportAttendanceController extends Controller
 
         $today = Carbon::today();
 
-        // Cek apakah sudah absen hari ini
-        $exists = ReportAttendance::where('user_id', $user->id)
-            ->where('report_date', $today)
-            ->exists();
-
-        if ($exists) {
-            return back()->with('error', 'Anda sudah melakukan absensi hari ini.');
-        }
-
-        ReportAttendance::create([
+        $inserted = DB::table('report_attendances')->insertOrIgnore([
             'user_id' => $user->id,
             'account_id' => $user->account_id,
-            'report_date' => $today,
+            'report_date' => $today->toDateString(),
             'report_category' => $request->report_category,
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
+
+        if ($inserted === 0) {
+            return back()->with('error', 'Anda sudah melakukan absensi hari ini.');
+        }
 
         return back()->with('success', 'Berhasil melakukan absensi report harian!');
     }

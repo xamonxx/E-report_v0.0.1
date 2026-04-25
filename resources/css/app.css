@@ -272,6 +272,31 @@ html.dark .login-mobile-overlay {
     background: linear-gradient(to bottom, rgb(8 11 17 / 0.28), rgb(8 11 17 / 0.9));
 }
 
+.login-mobile-background {
+    transform: scale(1.03);
+    filter: blur(4px) saturate(0.92);
+}
+
+.login-mobile-topbar {
+    display: none;
+}
+
+.mobile-sidebar-drawer {
+    width: 86vw;
+    max-width: 20rem;
+}
+
+.mobile-sidebar-panel {
+    width: 100%;
+}
+
+.modal-surface-glow {
+    box-shadow:
+        0 28px 72px rgb(0 0 0 / 0.34),
+        0 0 0 1px rgb(255 255 255 / 0.04),
+        0 0 28px rgb(var(--color-primary-rgb) / 0.08);
+}
+
 .login-banner-overlay {
     background: linear-gradient(to top, rgb(15 23 42 / 0.68), rgb(15 23 42 / 0.08), rgb(0 0 0 / 0.12));
 }
@@ -1071,6 +1096,7 @@ html.dark .login-banner-overlay {
     display: flex;
     flex-direction: column;
     justify-content: center;
+    width: min(100%, 27.5rem);
     max-height: calc(100svh - 2rem);
     color: rgb(var(--color-on-surface-rgb) / 1);
     background: rgb(var(--color-surface-container-lowest-rgb) / 0.9);
@@ -1144,18 +1170,18 @@ html.dark .login-modal-backdrop {
 
 .consultation-modal-backdrop {
     background:
-        radial-gradient(circle at 15% 12%, rgb(var(--color-primary-rgb) / 0.09), transparent 34%),
-        rgb(var(--color-inverse-surface-rgb) / 0.36);
-    backdrop-filter: blur(9px) saturate(112%);
-    -webkit-backdrop-filter: blur(9px) saturate(112%);
+        radial-gradient(circle at 15% 12%, rgb(var(--color-primary-rgb) / 0.07), transparent 34%),
+        rgb(var(--color-inverse-surface-rgb) / 0.28);
+    backdrop-filter: blur(5px) saturate(108%);
+    -webkit-backdrop-filter: blur(5px) saturate(108%);
 }
 
 html.dark .consultation-modal-backdrop {
     background:
-        radial-gradient(circle at 16% 11%, rgb(var(--color-primary-rgb) / 0.1), transparent 38%),
-        rgb(3 8 15 / 0.44);
-    backdrop-filter: blur(10px) saturate(118%);
-    -webkit-backdrop-filter: blur(10px) saturate(118%);
+        radial-gradient(circle at 16% 11%, rgb(var(--color-primary-rgb) / 0.08), transparent 38%),
+        rgb(3 8 15 / 0.34);
+    backdrop-filter: blur(6px) saturate(110%);
+    -webkit-backdrop-filter: blur(6px) saturate(110%);
 }
 
 .login-autofill:-webkit-autofill,
@@ -1652,6 +1678,59 @@ html.dark .product-picked-chip {
     }
 }
 
+@media (max-width: 1023px) {
+    .mobile-sidebar-drawer {
+        width: 86vw;
+        max-width: 20rem;
+    }
+
+    .mobile-sidebar-panel {
+        height: 100dvh;
+        padding-top: max(1rem, env(safe-area-inset-top, 0px));
+        padding-bottom: max(1rem, env(safe-area-inset-bottom, 0px));
+    }
+}
+
+@media (max-width: 639px) {
+    .login-stage {
+        justify-content: flex-start;
+        gap: 0.85rem;
+        padding-top: max(0.95rem, env(safe-area-inset-top, 0px));
+        padding-bottom: max(1rem, env(safe-area-inset-bottom, 0px));
+    }
+
+    .login-mobile-topbar {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        min-height: 5.75rem;
+        padding: 0.35rem 0 0.55rem;
+    }
+
+    .login-mobile-topbar__logo {
+        width: min(17.5rem, calc(100vw - 1.5rem));
+        height: auto;
+        object-fit: contain;
+        filter:
+            drop-shadow(0 4px 12px rgba(0, 0, 0, 0.46))
+            drop-shadow(0 0 18px rgba(0, 0, 0, 0.22));
+    }
+
+    .login-panel {
+        justify-content: flex-start;
+        width: min(100%, 24.5rem);
+        max-height: none;
+        min-height: auto;
+        margin-top: 0.1rem;
+        padding: 1.35rem 1.1rem 1.45rem;
+        border-radius: 1.7rem;
+        box-shadow:
+            0 20px 50px rgb(0 0 0 / 0.34),
+            inset 0 1px 0 rgb(255 255 255 / 0.05);
+    }
+}
+
 @media (min-width: 640px) {
     .settings-form-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1803,6 +1882,32 @@ html.dark .product-picked-chip {
     }
     .login-hero-panel {
         min-height: 520px;
+    }
+}
+
+@media (max-width: 480px) {
+    .mobile-sidebar-drawer {
+        width: 88vw;
+        max-width: 18.75rem;
+    }
+
+    .mobile-sidebar-panel {
+        padding-top: max(0.85rem, env(safe-area-inset-top, 0px));
+    }
+
+    .login-mobile-topbar {
+        min-height: 5.1rem;
+        padding: 0.25rem 0 0.45rem;
+    }
+
+    .login-mobile-topbar__logo {
+        width: min(15.5rem, calc(100vw - 1.25rem));
+    }
+
+    .login-panel {
+        width: min(100%, 23.6rem);
+        padding: 1.2rem 1rem 1.3rem;
+        border-radius: 1.55rem;
     }
 }
 

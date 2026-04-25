@@ -75,8 +75,8 @@
 </div>
 
 <div class="bg-surface-container-lowest rounded-2xl shadow-sm overflow-hidden flex flex-col animate-fade-in border border-surface-container-low max-w-full">
-    <div class="px-6 sm:px-8 py-6 flex flex-col xl:flex-row justify-between items-start xl:items-center bg-white border-b border-surface-container-low gap-6">
-        <div>
+    <div class="px-6 sm:px-8 py-6 grid grid-cols-1 xl:grid-cols-[minmax(240px,300px)_minmax(0,1fr)] items-start gap-6 bg-gradient-to-r from-surface-container via-surface-container-high to-surface-container border-b border-surface-container-low">
+        <div class="min-w-0">
             <h2 class="text-xl font-bold font-headline text-on-surface">Data Rekap Laporan Admin</h2>
             <p class="text-xs text-on-surface-variant mt-1.5 flex items-center gap-1.5">
                 <x-icon name="event" class="w-3.5 h-3.5" />
@@ -88,14 +88,16 @@
                 <span>{{ $adminAttendances->count() }} data tampil</span>
             </p>
         </div>
-        <div class="flex flex-wrap items-center gap-3 text-[10px] sm:text-xs font-semibold no-print">
+        <div class="grid w-full self-stretch grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-5 items-stretch gap-3 text-[10px] sm:text-xs font-semibold no-print">
             @foreach($statusFilterChips as $statusKey => $chip)
                 @php $isActive = $selectedStatus === $statusKey; @endphp
                 <a href="{{ route('report-attendances.index', ['date' => $date->format('Y-m-d'), 'status' => $statusKey]) }}"
-                   class="inline-flex items-center gap-2 rounded-lg border px-3 py-2 transition-all {{ $isActive ? $chip['active'] : $chip['bg'].' '.$chip['text'].' '.$chip['border'].' hover:-translate-y-0.5 hover:shadow-md' }}">
-                    <span class="w-3 h-3 rounded {{ $isActive ? 'bg-white/90' : $chip['dot'] }} shrink-0"></span>
-                    <span>{{ $chip['label'] }}</span>
-                    <span class="rounded-full px-1.5 py-0.5 text-[9px] font-extrabold {{ $isActive ? 'bg-white/15 text-white' : 'bg-white/80 text-on-surface-variant' }}">
+                   class="inline-flex min-h-[3rem] w-full min-w-0 items-center justify-between gap-2 rounded-xl border px-3.5 py-2.5 transition-all {{ $isActive ? $chip['active'] : $chip['bg'].' '.$chip['text'].' '.$chip['border'].' hover:-translate-y-0.5 hover:shadow-md' }}">
+                    <span class="flex min-w-0 items-center gap-2.5">
+                        <span class="w-3 h-3 rounded {{ $isActive ? 'bg-white/90' : $chip['dot'] }} shrink-0"></span>
+                        <span class="truncate {{ $isActive ? 'text-white' : '' }}">{{ $chip['label'] }}</span>
+                    </span>
+                    <span class="shrink-0 rounded-full px-1.5 py-0.5 text-[9px] font-extrabold {{ $isActive ? 'bg-white/15 text-white' : 'bg-surface text-on-surface-variant border border-surface-container-high' }}">
                         {{ $statusCounts[$statusKey] ?? 0 }}
                     </span>
                 </a>
@@ -103,7 +105,7 @@
         </div>
     </div>
 
-    <div class="relative isolate table-scroll-mobile overflow-x-auto overflow-y-auto max-h-[34rem] scrollbar-thin scrollbar-thumb-surface-container shadow-inner">
+    <div class="relative isolate table-scroll-mobile overflow-x-auto overflow-y-auto max-h-[34rem] scrollbar-thin scrollbar-thumb-surface-container shadow-inner border border-surface-container-low">
         <table class="w-full min-w-[1180px] table-fixed text-left border-collapse">
             <colgroup>
                 <col class="w-[110px]">
@@ -152,15 +154,15 @@
                         <div class="flex justify-start">
                             @if($att->has_reported)
                                 @if($att->report_category === 'ada_wa')
-                                    <span class="px-4 py-1.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-green-100 text-green-700 border border-green-200 flex items-center gap-1.5 shadow-sm">
+                                    <span class="px-4 py-1.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-green-500/12 text-green-300 border border-green-500/20 flex items-center gap-1.5 shadow-sm">
                                         <x-icon name="done_all" class="w-3.5 h-3.5" /> Laporan - Ada WA
                                     </span>
                                 @elseif($att->report_category === 'nol_wa')
-                                    <span class="px-4 py-1.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-yellow-100 text-yellow-700 border border-yellow-200 flex items-center gap-1.5 shadow-sm">
+                                    <span class="px-4 py-1.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-yellow-500/12 text-yellow-300 border border-yellow-500/20 flex items-center gap-1.5 shadow-sm">
                                         <x-icon name="horizontal_rule" class="w-3.5 h-3.5" /> Laporan - 0 Data
                                     </span>
                                 @elseif($att->report_category === 'libur_susulan')
-                                    <span class="px-4 py-1.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-sky-100 text-sky-700 border border-sky-200 flex items-center gap-1.5 shadow-sm">
+                                    <span class="px-4 py-1.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-sky-500/12 text-sky-300 border border-sky-500/20 flex items-center gap-1.5 shadow-sm">
                                         <x-icon name="event_note" class="w-3.5 h-3.5" /> Susulan / Libur
                                     </span>
                                 @else

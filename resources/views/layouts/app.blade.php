@@ -55,8 +55,8 @@
     <div class="flex min-h-screen lg:h-screen relative overflow-hidden">
         <div id="sidebar-drawer"
              :aria-hidden="(isMobile && !sidebarOpen).toString()"
-             class="fixed inset-y-0 left-0 z-50 lg:static transition-all duration-300 ease-in-out shrink-0 overflow-hidden {{ $isSidebarOpen ? 'max-lg:-translate-x-full lg:translate-x-0 w-64' : '-translate-x-full lg:translate-x-0 lg:w-[5.5rem] w-64' }}"
-             :class="sidebarOpen ? '!translate-x-0 !w-64' : '!-translate-x-full lg:!translate-x-0 lg:!w-[5.5rem] !w-64'">
+             class="mobile-sidebar-drawer fixed inset-y-0 left-0 z-50 lg:static transition-all duration-300 ease-in-out shrink-0 overflow-hidden {{ $isSidebarOpen ? 'max-lg:-translate-x-full lg:translate-x-0 lg:w-64' : '-translate-x-full lg:translate-x-0 lg:w-[5.5rem]' }}"
+             :class="sidebarOpen ? '!translate-x-0 !w-[86vw] sm:!w-72 lg:!w-64' : '!-translate-x-full lg:!translate-x-0 lg:!w-[5.5rem] !w-[86vw] sm:!w-72'">
             @include('components.sidebar')
         </div>
 

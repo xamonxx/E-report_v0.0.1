@@ -11,6 +11,7 @@ use App\Models\StatusCategory;
 use App\Models\User;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use RuntimeException;
 use SplFileObject;
@@ -38,6 +39,16 @@ class ConsultationImportService
 
     public function process(ConsultationImport $import): void
     {
+        $import->refresh();
+
+        if ($import->status === 'completed') {
+            return;
+        }
+
+        if ($import->status === 'processing' && $import->started_at) {
+            return;
+        }
+
         $import->update([
             'status' => 'processing',
             'started_at' => now(),
@@ -169,26 +180,6 @@ class ConsultationImportService
         int $defaultStatusId,
         int $createdBy
     ): array {
-        $accountIds = array_values(array_unique(array_map('intval', array_column($chunk, 'account_id'))));
-
-        $existingConsultations = Consultation::query()
-            ->withTrashed()
-            ->whereIn('account_id', $accountIds)
-            ->get()
-            ->values();
-
-        if (Consultation::hasNeedsCategoryPivot()) {
-            $existingConsultations->load('needsCategories');
-        }
-
-        $existingPhoneKeys = [];
-        $existingProfileKeys = [];
-
-        foreach ($existingConsultations as $consultation) {
-            $existingPhoneKeys[$consultation->buildLeadPhoneKeyFromModel()] = true;
-            $existingProfileKeys[$consultation->buildLeadProfileKeyFromModel()] = true;
-        }
-
         $inserted = 0;
         $duplicates = 0;
 
@@ -207,31 +198,63 @@ class ConsultationImportService
             ]);
 
             if (
-                isset($existingPhoneKeys[$phoneKey])
-                || isset($existingProfileKeys[$profileKey])
-                || isset($seenPhoneKeys[$phoneKey])
+                isset($seenPhoneKeys[$phoneKey])
                 || isset($seenProfileKeys[$profileKey])
+                || Consultation::findDuplicateLead([
+                    'account_id' => $row['account_id'],
+                    'client_name' => $row['client_name'],
+                    'phone' => $row['phone'],
+                    'province' => $row['province'] ?? null,
+                    'city' => $row['city'] ?? null,
+                    'district' => $row['district'] ?? null,
+                    'address' => $row['address'] ?? null,
+                    'product_details' => $row['product_details'] ?? null,
+                    'needs_category_ids' => [$defaultCategoryId],
+                ])
             ) {
                 $duplicates++;
                 continue;
             }
 
-            $consultation = Consultation::create([
-                'consultation_id' => Consultation::generateConsultationId($row['account_id']),
-                'client_name' => $row['client_name'],
-                'phone' => $row['phone'],
-                'province' => $row['province'] ?? null,
-                'city' => $row['city'] ?? null,
-                'district' => $row['district'] ?? null,
-                'address' => $row['address'] ?? null,
-                'account_id' => $row['account_id'],
-                'needs_category_id' => $defaultCategoryId,
-                'product_details' => $row['product_details'] ?? null,
-                'status_category_id' => $defaultStatusId,
-                'notes' => null,
-                'created_by' => $createdBy,
-                'consultation_date' => now()->toDateString(),
-            ]);
+            $consultation = DB::transaction(function () use ($createdBy, $defaultCategoryId, $defaultStatusId, $row) {
+                $duplicate = Consultation::findDuplicateLead([
+                    'account_id' => $row['account_id'],
+                    'client_name' => $row['client_name'],
+                    'phone' => $row['phone'],
+                    'province' => $row['province'] ?? null,
+                    'city' => $row['city'] ?? null,
+                    'district' => $row['district'] ?? null,
+                    'address' => $row['address'] ?? null,
+                    'product_details' => $row['product_details'] ?? null,
+                    'needs_category_ids' => [$defaultCategoryId],
+                ]);
+
+                if ($duplicate) {
+                    return null;
+                }
+
+                return Consultation::create([
+                    'consultation_id' => Consultation::generateConsultationId($row['account_id']),
+                    'client_name' => $row['client_name'],
+                    'phone' => $row['phone'],
+                    'province' => $row['province'] ?? null,
+                    'city' => $row['city'] ?? null,
+                    'district' => $row['district'] ?? null,
+                    'address' => $row['address'] ?? null,
+                    'account_id' => $row['account_id'],
+                    'needs_category_id' => $defaultCategoryId,
+                    'product_details' => $row['product_details'] ?? null,
+                    'status_category_id' => $defaultStatusId,
+                    'notes' => null,
+                    'created_by' => $createdBy,
+                    'consultation_date' => now()->toDateString(),
+                ]);
+            }, 3);
+
+            if (! $consultation) {
+                $duplicates++;
+                continue;
+            }
 
             if (Consultation::hasNeedsCategoryPivot()) {
                 $consultation->needsCategories()->sync([$defaultCategoryId]);

@@ -4,15 +4,22 @@
 {{-- Main wrapper. On mobile, the background image covers the screen. On desktop, it's a solid dark color. --}}
 <div class="login-shell relative font-sans">
     {{-- Mobile Background Image (Only visible < lg) --}}
-    <div class="fixed inset-0 z-0 lg:hidden bg-cover bg-center bg-no-repeat" style="background-image: url('{{ asset('images/bg-login.png') }}');"></div>
+    <div class="login-mobile-background fixed inset-0 z-0 lg:hidden bg-cover bg-center bg-no-repeat" style="background-image: url('{{ asset('images/bg-login.png') }}');"></div>
     <div class="login-mobile-overlay fixed inset-0 z-0 lg:hidden"></div>
 
-    <div class="login-stage relative z-10 mx-auto flex flex-col h-full w-full max-w-[1320px] items-center justify-center px-3 sm:px-5 lg:px-6 py-6 lg:py-10">
-        {{-- Custom Top-Left Logo --}}
-        <div class="fixed -top-6 sm:-top-7 lg:-top-10 left-4 sm:left-6 flex items-start animate-fade-in z-[60]">
+    <div class="login-stage relative z-10 mx-auto flex flex-col h-full w-full max-w-[1320px] items-center justify-center px-3 sm:px-5 lg:px-6 py-4 sm:py-6 lg:py-10">
+        {{-- Desktop / tablet logo --}}
+        <div class="hidden sm:flex fixed top-2 sm:top-3 lg:top-4 left-4 sm:left-6 items-start animate-fade-in z-[60]">
             <img src="{{ asset('images/putra_corporation_exact.svg') }}" 
                  alt="Putra Corporation Logo" 
-                 class="h-[105px] sm:h-[125px] md:h-[140px] xl:h-[160px] w-auto object-contain hover:scale-105 transition-transform duration-300 [filter:drop-shadow(0px_2px_6px_rgba(0,0,0,0.9))_drop-shadow(0px_0px_20px_rgba(0,0,0,0.85))] lg:[filter:none]" />
+                 class="h-[92px] sm:h-[108px] md:h-[128px] xl:h-[154px] w-auto object-contain hover:scale-105 transition-transform duration-300 [filter:drop-shadow(0px_3px_10px_rgba(0,0,0,0.72))_drop-shadow(0px_0px_22px_rgba(0,0,0,0.55))]" />
+        </div>
+
+        {{-- Mobile top bar --}}
+        <div class="login-mobile-topbar sm:hidden w-full animate-fade-in">
+            <img src="{{ asset('images/putra_corporation_exact.svg') }}"
+                 alt="Putra Corporation Logo"
+                 class="login-mobile-topbar__logo" />
         </div>
 
         <div x-data="loginPage({ waNumber: '6285168112098', autoSlideMs: 4600 })"
@@ -331,7 +338,7 @@
                     <template x-teleport="body">
                         <div x-show="showBugModal" x-cloak class="login-modal-backdrop fixed inset-0 z-[100] flex items-center justify-center p-4"
                              x-transition.opacity.duration.400ms>
-                            <div @click.away="showBugModal = false" class="login-modal w-full max-w-md rounded-[2rem] shadow-2xl animate-fade-in overflow-hidden mx-2">
+                            <div @click.away="showBugModal = false" class="login-modal modal-surface-glow w-full max-w-md rounded-[2rem] shadow-2xl animate-fade-in overflow-hidden mx-2">
                                 <div class="bg-gradient-to-r from-error/10 to-transparent px-6 sm:px-8 py-5 sm:py-6 flex items-center justify-between border-b border-error/10">
                                     <div class="flex items-center gap-3 text-error">
                                         <div class="w-8 h-8 rounded-full bg-error/10 flex items-center justify-center">

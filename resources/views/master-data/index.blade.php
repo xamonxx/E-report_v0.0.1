@@ -268,13 +268,13 @@
                 <div class="space-y-2">
                     <label class="block text-[10px] font-bold text-on-surface-variant uppercase tracking-widest px-1">Pilih Role</label>
                     <input type="hidden" name="role" id="roleSelect" :value="createUserRole" required>
-                    <div class="relative isolate grid grid-cols-2 rounded-xl bg-surface-container-low/80 p-1 shadow-inner ring-1 ring-surface-container/80 backdrop-blur-sm">
+                    <div class="relative isolate grid grid-cols-2 rounded-2xl bg-surface-container-low/80 p-1 shadow-inner ring-1 ring-surface-container/80 backdrop-blur-sm">
                         <span aria-hidden="true"
-                              class="pointer-events-none absolute inset-y-1 left-1 w-[calc(50%-0.25rem)] rounded-[0.85rem] bg-primary shadow-md shadow-primary/20 transition-transform duration-300 ease-out"
+                              class="pointer-events-none absolute inset-y-1 left-1 w-[calc(50%-0.25rem)] rounded-[1rem] bg-primary shadow-[0_10px_24px_rgb(var(--color-primary-rgb)/0.24)] transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]"
                               :class="createUserRole === 'super_admin' ? 'translate-x-full' : 'translate-x-0'"></span>
                         <button type="button"
                                 @click="createUserRole = 'admin'"
-                                class="relative z-10 rounded-[0.85rem] px-2.5 py-2 text-xs font-semibold leading-tight tracking-tight transition-all duration-300"
+                                class="relative z-10 rounded-[1rem] px-2.5 py-2 text-xs font-semibold leading-tight tracking-tight transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]"
                                 :class="createUserRole === 'admin'
                                     ? 'text-on-primary'
                                     : 'text-on-surface-variant hover:text-on-surface'">
@@ -282,7 +282,7 @@
                         </button>
                         <button type="button"
                                 @click="createUserRole = 'super_admin'"
-                                class="relative z-10 rounded-[0.85rem] px-2.5 py-2 text-xs font-semibold leading-tight tracking-tight transition-all duration-300"
+                                class="relative z-10 rounded-[1rem] px-2.5 py-2 text-xs font-semibold leading-tight tracking-tight transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]"
                                 :class="createUserRole === 'super_admin'
                                     ? 'text-on-primary'
                                     : 'text-on-surface-variant hover:text-on-surface'">
@@ -467,7 +467,7 @@
 <template x-teleport="body">
     <div x-show="showEditUserModal"
          x-cloak
-         class="fixed inset-0 z-[70] flex items-end justify-center bg-inverse-surface/50 p-0 backdrop-blur-sm sm:items-center sm:p-4"
+         class="consultation-modal-backdrop fixed inset-0 z-[70] flex items-end justify-center p-0 sm:items-center sm:p-4"
          x-transition:enter="transition ease-out duration-200"
          x-transition:enter-start="opacity-0"
          x-transition:enter-end="opacity-100"
@@ -475,7 +475,7 @@
          x-transition:leave-start="opacity-100"
          x-transition:leave-end="opacity-0">
         <div @click.away="closeEditUserModal()"
-             class="flex max-h-[92vh] w-full max-w-3xl flex-col overflow-hidden rounded-t-3xl bg-surface-container-lowest shadow-2xl sm:max-w-xl sm:rounded-3xl">
+             class="modal-surface-glow flex max-h-[92vh] w-full max-w-3xl flex-col overflow-hidden rounded-t-3xl bg-surface-container-lowest shadow-2xl shadow-primary/10 ring-1 ring-white/5 sm:max-w-xl sm:rounded-3xl">
             <div class="flex items-start justify-between gap-4 border-b border-surface-container-low px-5 py-4 sm:px-6 sm:py-5">
                 <div>
                     <h3 class="font-headline text-lg font-extrabold text-on-surface sm:text-xl">Edit User</h3>
@@ -572,13 +572,13 @@
                     <div class="space-y-2">
                         <label class="block px-1 text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Pilih Role</label>
                         <input type="hidden" name="role" :value="editUser.role || 'admin'" required>
-                        <div class="relative isolate grid grid-cols-2 rounded-xl bg-surface-container-low/80 p-1 shadow-inner ring-1 ring-surface-container/80 backdrop-blur-sm">
+                        <div class="relative isolate grid grid-cols-2 rounded-2xl bg-surface-container-low/80 p-1 shadow-inner ring-1 ring-surface-container/80 backdrop-blur-sm">
                             <span aria-hidden="true"
-                                  class="pointer-events-none absolute inset-y-1 left-1 w-[calc(50%-0.25rem)] rounded-[0.85rem] bg-primary shadow-md shadow-primary/20 transition-transform duration-300 ease-out"
+                                  class="pointer-events-none absolute inset-y-1 left-1 w-[calc(50%-0.25rem)] rounded-[1rem] bg-primary shadow-[0_10px_24px_rgb(var(--color-primary-rgb)/0.24)] transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]"
                                   :class="(editUser.role || 'admin') === 'super_admin' ? 'translate-x-full' : 'translate-x-0'"></span>
                             <button type="button"
                                     @click="editUser.role = 'admin'"
-                                    class="relative z-10 rounded-[0.85rem] px-2.5 py-2 text-xs font-semibold leading-tight tracking-tight transition-all duration-300"
+                                    class="relative z-10 rounded-[1rem] px-2.5 py-2 text-xs font-semibold leading-tight tracking-tight transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]"
                                     :class="(editUser.role || 'admin') === 'admin'
                                         ? 'text-on-primary'
                                         : 'text-on-surface-variant hover:text-on-surface'">
@@ -586,7 +586,7 @@
                             </button>
                             <button type="button"
                                     @click="editUser.role = 'super_admin'"
-                                    class="relative z-10 rounded-[0.85rem] px-2.5 py-2 text-xs font-semibold leading-tight tracking-tight transition-all duration-300"
+                                    class="relative z-10 rounded-[1rem] px-2.5 py-2 text-xs font-semibold leading-tight tracking-tight transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]"
                                     :class="(editUser.role || 'admin') === 'super_admin'
                                         ? 'text-on-primary'
                                         : 'text-on-surface-variant hover:text-on-surface'">

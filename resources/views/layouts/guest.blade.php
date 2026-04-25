@@ -28,7 +28,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body x-data="themeController()" x-init="initTheme()" class="font-sans antialiased text-on-surface bg-surface min-h-screen">
-    <div class="fixed top-4 right-4 z-50">
+    <div class="fixed top-4 right-4 z-50 hidden sm:block">
         <button type="button"
                 @click="toggleTheme()"
                 :aria-label="themeMode === 'dark' ? 'Aktifkan mode terang' : 'Aktifkan mode gelap'"

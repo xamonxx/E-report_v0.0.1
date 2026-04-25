@@ -67,14 +67,14 @@
 
             {{-- Province + City (with auto-fill) --}}
             <div x-data="cityAutoFill(@js(old('city', '')), @js(old('province', '')), @js(old('district', '')))" class="space-y-5 sm:space-y-6">
-                <div class="flex items-center justify-between gap-3 rounded-2xl border border-amber-500/20 bg-amber-500/10 px-4 py-3">
+                <div class="flex items-center justify-between gap-3 rounded-2xl border border-primary/20 bg-primary/10 px-4 py-3">
                     <div>
-                        <div class="text-[10px] font-bold uppercase tracking-[0.18em] text-amber-700">Quick Action Wilayah</div>
+                        <div class="text-[10px] font-bold uppercase tracking-[0.18em] text-primary">Quick Action Wilayah</div>
                         <p class="mt-1 text-xs text-on-surface-variant">Isi provinsi, kota, dan kecamatan sekaligus dengan status belum terkonfirmasi.</p>
                     </div>
                     <button type="button"
                             @click="setPendingConfirmation(@js($pendingConfirmationLabel))"
-                            class="inline-flex shrink-0 items-center justify-center rounded-xl border border-amber-600/20 bg-white px-4 py-2.5 text-xs font-bold text-amber-700 shadow-sm transition hover:bg-amber-50">
+                            class="inline-flex shrink-0 items-center justify-center rounded-xl border border-primary/20 bg-surface px-4 py-2.5 text-xs font-bold text-primary shadow-sm transition hover:bg-primary/10">
                         Belum Ada Konfirmasi
                     </button>
                 </div>
@@ -318,7 +318,7 @@
                             @if($pendingConfirmationProductId)
                             <button type="button"
                                     @click="setPendingConfirmationProduct()"
-                                    class="inline-flex items-center justify-center rounded-xl border border-amber-600/20 bg-amber-500/10 px-3 py-2 text-[11px] font-bold text-amber-700 transition hover:bg-amber-500/15">
+                                    class="inline-flex items-center justify-center rounded-xl border border-primary/20 bg-primary/10 px-3 py-2 text-[11px] font-bold text-primary transition hover:bg-primary/15">
                                 Pilih Belum Ada Konfirmasi
                             </button>
                             @endif
